@@ -46,7 +46,7 @@
 	<Fragment>
 
 		<Component Id="SharpSvn1.8_x86_powtools" Directory="INSTALLFOLDER" Win64="no">
-			<File Id="SharpSvn1.8_x86_powtools" Name="SharpSvn.dll" Source="$(var.SolutionDir)packages\SharpSvn.1.8-x86.1.8010.3345.53\lib\net20\SharpSvn.dll" />
+			<File Id="SharpSvn1.8_x86_powtools" Name="SharpSvn.dll" Source="$(var.pwtoolsbin)\SharpSvn.dll" />
 		</Component>
 
 		<Component Id="true" Directory="INSTALLFOLDER" Win64="no">
