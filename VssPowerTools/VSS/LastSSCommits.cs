@@ -343,67 +343,6 @@ namespace TrackGearLibrary.VSS
 
 			Process.Start(newPath);
 		}
-		/*
-				void composeReviewEmailToolStripMenuItem_Click(object sender, EventArgs e)
-				{
-					UsageMetrics.IncrementUsage(UsageMetrics.UsageKind.SSCommitsComposeReviewRequest);
-
-					var dlg = new IssuesList.IssuesList(IssuesList.IssuesList.IssuesListPurpose.SelectIssuesForReviewRequest, null, null);
-					dlg.SetInformation("Select fixed issue");
-					if(dlg.ShowDialog() != DialogResult.OK)
-						return;
-
-					var selectedIssues = dlg.SelectedIssues;
-
-					var issuesShort = selectedIssues
-						.Select(iss => string.Format("#{0}.{1}", iss.Project, iss.Number))
-						.ToArray()
-					;
-
-					var subject = string.Format("Please review issue(s) {0}", string.Join(", ", issuesShort));
-
-					var sbBody = new StringBuilder(File.ReadAllText(Path.Combine(_baseDir, "review-ss-email-template.html")));
-
-					sbBody.Replace("$$TGL-VERSION$$", Assembly.GetExecutingAssembly().GetName().Version.ToString());
-
-					Func<TicketItem, string> formatTicket = t =>
-						{
-							return string.Format("#<a href='http://qa-portal/bts/bin/redirect-issue.html?issue={0}.{1}'>{0}.{1}</a>: {2} (<a href='tgdcmd:issue:{0}.{1}'>view in tgd</a>)<br/>",
-								HttpUtility.HtmlEncode(t.Project),
-								t.Number,
-								HttpUtility.HtmlEncode(t.Summary)
-							);
-						};
-
-					var issues = selectedIssues
-						.Aggregate(new StringBuilder(), (agg, t) => agg.AppendLine(formatTicket(t)))
-						.ToString()
-					;
-
-					sbBody.Replace("$$ISSUES$$", issues);
-					var paths = listViewCommits
-						.SelectedItems
-						.Cast<ListViewItem>()
-						.Select(i => i.Tag as CommitAtom)
-						.Where(a => a != null)
-						.Aggregate(new StringBuilder(), (acc, next) => acc.AppendLine(BuildVssPath(next)))
-						.ToString()
-					;
-
-					sbBody.Replace("$$PATHS$$", paths);
-
-					var app = new Microsoft.Office.Interop.Outlook.Application();
-					var msg = (Microsoft.Office.Interop.Outlook.MailItem)app.CreateItem(Microsoft.Office.Interop.Outlook.OlItemType.olMailItem);
-					msg.HTMLBody = sbBody.ToString();
-					msg.Subject = subject;
-
-					msg.Display();
-				}
-				static string BuildVssPath(CommitAtom change)
-				{
-					return string.Format("{0} (<a href='tgdcmd:vssdiff:{1}@{2}'>diff</a>)<br/>", HttpUtility.HtmlEncode(change.File), HttpUtility.UrlEncode(change.File), change.Version);
-				}
-		*/
 
 		void buttonLoad_Click(object sender, EventArgs e)
 		{

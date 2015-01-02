@@ -38,7 +38,6 @@
 			this.contextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this.copyPathsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.generateFDPToFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.composeReviewEmailToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
 			this.blameToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.unifiedDiffToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -116,8 +115,6 @@
 			// 
 			this.contextMenuStrip.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.copyPathsToolStripMenuItem,
-            this.generateFDPToFileToolStripMenuItem,
-            this.composeReviewEmailToolStripMenuItem,
             this.toolStripSeparator1,
             this.blameToolStripMenuItem,
             this.unifiedDiffToolStripMenuItem,
@@ -127,6 +124,7 @@
             this.queuePatchToolStripMenuItem,
             this.queuePatchToLatestToolStripMenuItem,
             this.toolStripSeparator3,
+            this.generateFDPToFileToolStripMenuItem,
             this.cSVToClipboardToolStripMenuItem});
 			this.contextMenuStrip.Name = "contextMenuStrip";
 			this.contextMenuStrip.Size = new System.Drawing.Size(219, 242);
@@ -145,12 +143,6 @@
 			this.generateFDPToFileToolStripMenuItem.Size = new System.Drawing.Size(218, 22);
 			this.generateFDPToFileToolStripMenuItem.Text = "Generate FDP to file";
 			this.generateFDPToFileToolStripMenuItem.Click += new System.EventHandler(this.generateFDPToFileToolStripMenuItem_Click);
-			// 
-			// composeReviewEmailToolStripMenuItem
-			// 
-			this.composeReviewEmailToolStripMenuItem.Name = "composeReviewEmailToolStripMenuItem";
-			this.composeReviewEmailToolStripMenuItem.Size = new System.Drawing.Size(218, 22);
-			this.composeReviewEmailToolStripMenuItem.Text = "Compose review e-mail";
 			// 
 			// toolStripSeparator1
 			// 
@@ -388,7 +380,6 @@
 		private System.Windows.Forms.ContextMenuStrip contextMenuStrip;
 		private System.Windows.Forms.ToolStripMenuItem copyPathsToolStripMenuItem;
 		private System.Windows.Forms.ToolStripMenuItem generateFDPToFileToolStripMenuItem;
-		private System.Windows.Forms.ToolStripMenuItem composeReviewEmailToolStripMenuItem;
 		private System.Windows.Forms.TextBox textBoxSS;
 		private System.Windows.Forms.Label label4;
 		private System.Windows.Forms.Button buttonLoad;
