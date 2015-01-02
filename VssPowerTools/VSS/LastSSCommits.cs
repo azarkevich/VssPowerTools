@@ -318,11 +318,6 @@ namespace TrackGearLibrary.VSS
 
 			sb.Append(File.ReadAllText(Path.Combine(_baseDir, "fdp-template.txt")));
 
-			// guess cause
-			sb.Replace("$$CAUSE$$", "	TBD\r\n");
-
-			sb.Replace("$$MODULES$$", "	TBD\r\n");
-
 			// detect changed sources
 			var paths = listViewCommits
 				.SelectedItems
