@@ -6,6 +6,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
+using VssPowerTools;
 
 namespace TrackGearLibrary.VSS
 {
@@ -66,7 +67,7 @@ namespace TrackGearLibrary.VSS
 			listViewPatches.Items.Add(plvi);
 		}
 
-		private void ButtonRemoveClick(object sender, EventArgs e)
+		void ButtonRemoveClick(object sender, EventArgs e)
 		{
 			listViewPatches
 				.SelectedItems
@@ -83,27 +84,14 @@ namespace TrackGearLibrary.VSS
 				if (savePatchDialog.ShowDialog() != DialogResult.OK)
 					return;
 
-				var sb = new StringBuilder();
-
-				sb.AppendFormat("create-patch-ex");
-
-				foreach (ListViewItem item in listViewPatches.Items)
-				{
-					var qitem = (PatchQueueItem)item.Tag;
-
-					sb.AppendFormat(" --file=\"{0}:{1}:{2}:{3}\"", _vssDB, qitem.FileSpec, qitem.Version1, qitem.Version2);
-				}
-
-				sb.AppendFormat(" --output=\"{0}\"", savePatchDialog.FileName);
-
-				var powerTools = Path.Combine(Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location), "VssPowerTools\\VssPowerTools.exe");
-				if (!File.Exists(powerTools))
-					throw new ApplicationException("NotFound:\n" + "VssPowerTools\\VssPowerTools.exe\nIn:\n" + Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location));
-
-				Process
-					.Start(powerTools, sb.ToString())
-					.WaitForExit()
+				var queuedItems = listViewPatches.Items
+					.Cast<ListViewItem>()
+					.Select(i => (PatchQueueItem)i.Tag)
+					.Select(qitem => string.Format("{0}:{1}:{2}:{3}", _vssDB, qitem.FileSpec, qitem.Version1, qitem.Version2))
+					.ToArray()
 				;
+
+				new CreatePatch().CreateMulti(savePatchDialog.FileName, queuedItems);
 
 				Process.Start(savePatchDialog.FileName);
 			}

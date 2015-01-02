@@ -38,7 +38,7 @@
 			<ComponentRef Id="true" />
 			<ComponentRef Id="VssPowerTools" />
 			<ComponentRef Id="SharpSvn1.8_x86_powtools" />
-			<ComponentRef Id="fdp-template" />
+			<ComponentRef Id="fdp_template" />
 			<ComponentRef Id="Registry_VssPowAppPath" />
 		</ComponentGroup>
 	</Fragment>
@@ -53,8 +53,8 @@
 			<File Name="true.exe" Id="true.exe" Source="$(var.pwtoolsbin)true.exe" />
 		</Component>
 
-		<Component Id="fdp-template" Directory="INSTALLFOLDER" Win64="no">
-			<File Name="fdp-template.txt" Id="fdp-template.txt" Source="$(var.pwtoolsbin)fdp-template.txt" />
+		<Component Id="fdp_template" Directory="INSTALLFOLDER" Win64="no">
+			<File Name="fdp-template.txt" Id="fdp_template.txt" Source="$(var.pwtoolsbin)fdp-template.txt" />
 		</Component>
 
 		<Component Id="VssPowerTools" Directory="INSTALLFOLDER" Win64="no">
