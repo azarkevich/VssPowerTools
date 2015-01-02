@@ -1,17 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Windows.Forms;
-using System.IO;
-using System.Text.RegularExpressions;
-using System.Reflection;
 using System.Diagnostics;
-using VssPowerTools;
+using System.Globalization;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+using System.Text;
+using System.Text.RegularExpressions;
+using System.Windows.Forms;
 using VssPowerTools.Properties;
 
-namespace TrackGearLibrary.VSS
+namespace VssPowerTools
 {
 	public partial class LastSSCommits : Form
 	{

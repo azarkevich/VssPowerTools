@@ -1,4 +1,4 @@
-﻿namespace TrackGearLibrary.VSS
+﻿namespace VssPowerTools
 {
 	partial class PatchQueueForm
 	{
