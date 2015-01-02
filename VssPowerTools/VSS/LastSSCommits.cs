@@ -8,7 +8,7 @@ using System.IO;
 using System.Text.RegularExpressions;
 using System.Reflection;
 using System.Diagnostics;
-using System.Web;
+using VssPowerTools;
 using VssPowerTools.Properties;
 
 namespace TrackGearLibrary.VSS
@@ -343,67 +343,67 @@ namespace TrackGearLibrary.VSS
 
 			Process.Start(newPath);
 		}
-/*
-		void composeReviewEmailToolStripMenuItem_Click(object sender, EventArgs e)
-		{
-			UsageMetrics.IncrementUsage(UsageMetrics.UsageKind.SSCommitsComposeReviewRequest);
-
-			var dlg = new IssuesList.IssuesList(IssuesList.IssuesList.IssuesListPurpose.SelectIssuesForReviewRequest, null, null);
-			dlg.SetInformation("Select fixed issue");
-			if(dlg.ShowDialog() != DialogResult.OK)
-				return;
-
-			var selectedIssues = dlg.SelectedIssues;
-
-			var issuesShort = selectedIssues
-				.Select(iss => string.Format("#{0}.{1}", iss.Project, iss.Number))
-				.ToArray()
-			;
-
-			var subject = string.Format("Please review issue(s) {0}", string.Join(", ", issuesShort));
-
-			var sbBody = new StringBuilder(File.ReadAllText(Path.Combine(_baseDir, "review-ss-email-template.html")));
-
-			sbBody.Replace("$$TGL-VERSION$$", Assembly.GetExecutingAssembly().GetName().Version.ToString());
-
-			Func<TicketItem, string> formatTicket = t =>
+		/*
+				void composeReviewEmailToolStripMenuItem_Click(object sender, EventArgs e)
 				{
-					return string.Format("#<a href='http://qa-portal/bts/bin/redirect-issue.html?issue={0}.{1}'>{0}.{1}</a>: {2} (<a href='tgdcmd:issue:{0}.{1}'>view in tgd</a>)<br/>",
-						HttpUtility.HtmlEncode(t.Project),
-						t.Number,
-						HttpUtility.HtmlEncode(t.Summary)
-					);
-				};
+					UsageMetrics.IncrementUsage(UsageMetrics.UsageKind.SSCommitsComposeReviewRequest);
 
-			var issues = selectedIssues
-				.Aggregate(new StringBuilder(), (agg, t) => agg.AppendLine(formatTicket(t)))
-				.ToString()
-			;
+					var dlg = new IssuesList.IssuesList(IssuesList.IssuesList.IssuesListPurpose.SelectIssuesForReviewRequest, null, null);
+					dlg.SetInformation("Select fixed issue");
+					if(dlg.ShowDialog() != DialogResult.OK)
+						return;
 
-			sbBody.Replace("$$ISSUES$$", issues);
-			var paths = listViewCommits
-				.SelectedItems
-				.Cast<ListViewItem>()
-				.Select(i => i.Tag as CommitAtom)
-				.Where(a => a != null)
-				.Aggregate(new StringBuilder(), (acc, next) => acc.AppendLine(BuildVssPath(next)))
-				.ToString()
-			;
+					var selectedIssues = dlg.SelectedIssues;
 
-			sbBody.Replace("$$PATHS$$", paths);
+					var issuesShort = selectedIssues
+						.Select(iss => string.Format("#{0}.{1}", iss.Project, iss.Number))
+						.ToArray()
+					;
 
-			var app = new Microsoft.Office.Interop.Outlook.Application();
-			var msg = (Microsoft.Office.Interop.Outlook.MailItem)app.CreateItem(Microsoft.Office.Interop.Outlook.OlItemType.olMailItem);
-			msg.HTMLBody = sbBody.ToString();
-			msg.Subject = subject;
+					var subject = string.Format("Please review issue(s) {0}", string.Join(", ", issuesShort));
 
-			msg.Display();
-		}
-*/
-		static string BuildVssPath(CommitAtom change)
-		{
-			return string.Format("{0} (<a href='tgdcmd:vssdiff:{1}@{2}'>diff</a>)<br/>", HttpUtility.HtmlEncode(change.File), HttpUtility.UrlEncode(change.File), change.Version);
-		}
+					var sbBody = new StringBuilder(File.ReadAllText(Path.Combine(_baseDir, "review-ss-email-template.html")));
+
+					sbBody.Replace("$$TGL-VERSION$$", Assembly.GetExecutingAssembly().GetName().Version.ToString());
+
+					Func<TicketItem, string> formatTicket = t =>
+						{
+							return string.Format("#<a href='http://qa-portal/bts/bin/redirect-issue.html?issue={0}.{1}'>{0}.{1}</a>: {2} (<a href='tgdcmd:issue:{0}.{1}'>view in tgd</a>)<br/>",
+								HttpUtility.HtmlEncode(t.Project),
+								t.Number,
+								HttpUtility.HtmlEncode(t.Summary)
+							);
+						};
+
+					var issues = selectedIssues
+						.Aggregate(new StringBuilder(), (agg, t) => agg.AppendLine(formatTicket(t)))
+						.ToString()
+					;
+
+					sbBody.Replace("$$ISSUES$$", issues);
+					var paths = listViewCommits
+						.SelectedItems
+						.Cast<ListViewItem>()
+						.Select(i => i.Tag as CommitAtom)
+						.Where(a => a != null)
+						.Aggregate(new StringBuilder(), (acc, next) => acc.AppendLine(BuildVssPath(next)))
+						.ToString()
+					;
+
+					sbBody.Replace("$$PATHS$$", paths);
+
+					var app = new Microsoft.Office.Interop.Outlook.Application();
+					var msg = (Microsoft.Office.Interop.Outlook.MailItem)app.CreateItem(Microsoft.Office.Interop.Outlook.OlItemType.olMailItem);
+					msg.HTMLBody = sbBody.ToString();
+					msg.Subject = subject;
+
+					msg.Display();
+				}
+				static string BuildVssPath(CommitAtom change)
+				{
+					return string.Format("{0} (<a href='tgdcmd:vssdiff:{1}@{2}'>diff</a>)<br/>", HttpUtility.HtmlEncode(change.File), HttpUtility.UrlEncode(change.File), change.Version);
+				}
+		*/
 
 		void buttonLoad_Click(object sender, EventArgs e)
 		{
@@ -668,183 +668,124 @@ namespace TrackGearLibrary.VSS
 
 		void blameToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			try
+			var selected = listViewCommits
+				.SelectedItems
+				.Cast<ListViewItem>()
+				.Select(i => i.Tag as CommitAtom)
+				.Where(a => a != null)
+				.ToArray()
+			;
+
+			if(selected.Length != 1)
 			{
-				var selected = listViewCommits
-					.SelectedItems
-					.Cast<ListViewItem>()
-					.Select(i => i.Tag as CommitAtom)
-					.Where(a => a != null)
-					.ToArray()
-				;
-
-				if(selected.Length != 1)
-				{
-					MessageBox.Show("Select exactly one item", "Error");
-					return;
-				}
-
-				var commit = selected[0];
-
-				if(commit.Action == CommitAction.Delete || commit.Action == CommitAction.Destroy)
-				{
-					MessageBox.Show("Can't show blame for deleted files", "Error");
-					return;
-				}
-
-				var exe = Path.Combine(_baseDir, "VssPowerTools\\VssPowerTools.exe");
-
-				if(!File.Exists(exe))
-					throw new ApplicationException("NotFound:\n" + "VssPowerTools\\VssPowerTools.exe\nIn:\n" + _baseDir);
-
-				Process
-					.Start(exe, string.Format("blame --ss-dir=\"{0}\" \"{1}\"", textBoxSS.Text.TrimEnd('\\', '/'), commit.File))
-				;
+				MessageBox.Show("Select exactly one item", "Error");
+				return;
 			}
-			catch(ApplicationException ex)
+
+			var commit = selected[0];
+
+			if(commit.Action == CommitAction.Delete || commit.Action == CommitAction.Destroy)
 			{
-				MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+				MessageBox.Show("Can't show blame for deleted files", "Error");
+				return;
 			}
-			catch(Exception ex)
-			{
-				MessageBox.Show(ex.ToString());
-			}
+
+			new VssBame(textBoxSS.Text.TrimEnd('\\', '/'), commit.File).ShowDialog();
 		}
 
 		void ShowUnifiedDiffToolStripMenuItemClick(object sender, EventArgs e)
 		{
+			var selected = listViewCommits
+				.SelectedItems
+				.Cast<ListViewItem>()
+				.Select(i => i.Tag as CommitAtom)
+				.Where(a => a != null)
+				.ToArray()
+			;
+
+			if(selected.Length != 1)
+			{
+				MessageBox.Show("Select exactly one item", "Error");
+				return;
+			}
+
+			var commit = selected[0];
+
+			if(commit.Action != CommitAction.Commit)
+			{
+				MessageBox.Show("Can show diff only for commit action", "Error");
+				return;
+			}
+
+			var outFile = Path.Combine(
+				Path.GetTempPath(),
+				string.Format(
+					"tgd-{0}.{1}.{2}-{3}.patch",
+					DateTime.Now.Ticks,
+					Path.GetFileName(commit.File.Trim('$')),
+					commit.Version - 1,
+					commit.Version
+				)
+			);
+
 			try
 			{
-				var selected = listViewCommits
-					.SelectedItems
-					.Cast<ListViewItem>()
-					.Select(i => i.Tag as CommitAtom)
-					.Where(a => a != null)
-					.ToArray()
+				new CreatePatch().Create(textBoxSS.Text.TrimEnd('\\', '/'),
+					commit.File,
+					commit.Version - 1,
+					commit.Version,
+					outFile,
+					false)
 				;
 
-				if(selected.Length != 1)
-				{
-					MessageBox.Show("Select exactly one item", "Error");
-					return;
-				}
-
-				var commit = selected[0];
-
-				if(commit.Action != CommitAction.Commit)
-				{
-					MessageBox.Show("Can show diff only for commit action", "Error");
-					return;
-				}
-
-				var outFile = Path.Combine(
-					Path.GetTempPath(),
-					string.Format(
-						"tgd-{0}.{1}.{2}-{3}.patch",
-						DateTime.Now.Ticks,
-						Path.GetFileName(commit.File.Trim('$')),
-						commit.Version - 1,
-						commit.Version
-					)
-				);
-
-				try
-				{
-					var exe = Path.Combine(_baseDir, "VssPowerTools\\VssPowerTools.exe");
-					if(!File.Exists(exe))
-						throw new ApplicationException("NotFound:\n" + "VssPowerTools\\VssPowerTools.exe\nIn:\n" + _baseDir);
-
-					var args = string.Format("create-patch \"{0}\" \"{1}\" {2} {3} \"{4}\"",
-						textBoxSS.Text.TrimEnd('\\', '/'),
-						commit.File,
-						commit.Version - 1,
-						commit.Version,
-						outFile
-					);
-
-					Clipboard.SetText(args);
-
-					Process
-						.Start(exe, args)
-						.WaitForExit()
-					;
-
-					Process
-						.Start(outFile)
-						.WaitForExit()
-					;
-				}
-				finally
-				{
-					if (File.Exists(outFile))
-						File.Delete(outFile);
-				}
+				Process
+					.Start(outFile)
+					.WaitForExit()
+				;
 			}
-			catch(ApplicationException ex)
+			finally
 			{
-				MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-			}
-			catch(Exception ex)
-			{
-				MessageBox.Show(ex.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
+				if (File.Exists(outFile))
+					File.Delete(outFile);
 			}
 		}
 
 		void CreatePatchToolStripMenuItem_Click(object sender, EventArgs e)
 		{
-			try
+			var selected = listViewCommits
+				.SelectedItems
+				.Cast<ListViewItem>()
+				.Select(i => i.Tag as CommitAtom)
+				.Where(a => a != null)
+				.ToArray()
+			;
+
+			if(selected.Any(a => a.Action != CommitAction.Commit))
 			{
-				var selected = listViewCommits
-					.SelectedItems
-					.Cast<ListViewItem>()
-					.Select(i => i.Tag as CommitAtom)
-					.Where(a => a != null)
-					.ToArray()
+				MessageBox.Show("Can create patch only for commit action.", "Error");
+				return;
+			}
+
+			var outputDir = Path.Combine(_baseDir, DateTime.Now.Ticks.ToString(CultureInfo.InvariantCulture));
+			Directory.CreateDirectory(outputDir);
+
+			foreach (var commit in selected)
+			{
+				var file = commit.File.Trim('$');
+
+				var outFile = string.Format("{0}.{1}.patch", Path.GetFileName(file), commit.Version);
+
+				new CreatePatch().Create(
+					textBoxSS.Text.TrimEnd('\\', '/'),
+					commit.File,
+					commit.Version - 1,
+					commit.Version,
+					Path.Combine(outputDir, outFile),
+					false)
 				;
-
-				if(selected.Any(a => a.Action != CommitAction.Commit))
-				{
-					MessageBox.Show("Can create patch only for commit action.", "Error");
-					return;
-				}
-
-				var outputDir = Path.Combine(_baseDir, DateTime.Now.Ticks.ToString(CultureInfo.InvariantCulture));
-				Directory.CreateDirectory(outputDir);
-
-				var powerTools = Path.Combine(_baseDir, "VssPowerTools\\VssPowerTools.exe");
-				if(!File.Exists(powerTools))
-					throw new ApplicationException("NotFound:\n" + "VssPowerTools\\VssPowerTools.exe\nIn:\n" + _baseDir);
-
-				foreach (var commit in selected)
-				{
-					var file = commit.File.Trim('$');
-
-					var outFile = string.Format("{0}.{1}.patch", Path.GetFileName(file), commit.Version);
-
-					var args = string.Format("create-patch \"{0}\" \"{1}\" {2} {3} \"{4}\"",
-						textBoxSS.Text.TrimEnd('\\', '/'),
-						commit.File,
-						commit.Version - 1,
-						commit.Version,
-						Path.Combine(outputDir, outFile)
-					);
-
-					Process
-						.Start(powerTools, args)
-						.WaitForExit()
-					;
-				}
-
-				Process.Start(outputDir);
 			}
-			catch(ApplicationException ex)
-			{
-				MessageBox.Show(ex.Message, "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-			}
-			catch(Exception ex)
-			{
-				MessageBox.Show(ex.ToString(), "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-			}
+
+			Process.Start(outputDir);
 		}
 
 		PatchQueueForm _patchPad;

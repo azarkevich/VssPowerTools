@@ -1,0 +1,37 @@
+#FIXED DEFECT PROFILE VERSION 2 - START#
+
+2	BACKWARD COMPATIBILITY
+	NA
+
+4	ROOT CAUSE
+$$CAUSE$$
+6	FIX DESCRIPTION
+	TBD
+
+7	REGRESSION AREAS - HIGH
+	TBD
+
+8	SIMILAR FUNCTIONALITY ANALYSIS
+	TBD
+
+9	TESTING PERFORMED
+$$MODULES$$
+10	LIST OF CHANGED SOURCES
+$$PATHS$$
+
+11	REVIEWER
+	$$REVIEWER$$
+
+12	CONFIGURATION MANAGEMENT - BRANCHING
+	NONE
+
+13	INJECTED IN VERSION
+	TBD
+	Build to regress: $$NEXTBUILD$$
+
+14 	FAILURE ANALYSIS
+	1-Why the issue was introduced and how it could be prevented?
+	2-What testing stage is repsonsible for catching this kind of defects and why it was not found?
+	3-What changes to the process could prevent such issues from appearance in the future?
+
+# FIXED DEFECT PROFILE - END#
