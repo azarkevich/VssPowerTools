@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+
+	<?define pwtoolsbin="$(var.VssPowerTools.ProjectDir)bin\x86\$(var.Configuration)\" ?>
+
+	<Product Id="*" Name="Visual Source Safe Power Tools" Language="1033" Version="$(var.SetupVersion)" Manufacturer="Sergey Azarkevich" UpgradeCode="71d26505-5226-4acb-b67d-c824fabc712b">
+		<Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" />
+
+		<Condition Message= "You need to be an administrator to install this product.">
+			Privileged
+		</Condition>
+
+		<Condition Message= 'This setup requires the .NET Framework 4.0 or higher.'>
+			<![CDATA[MsiNetAssemblySupport >= "4.0"]]>
+		</Condition>
+
+		<Property Id="REINSTALLMODE" Value="amus" />
+		<MediaTemplate EmbedCab="yes" />
+
+		<MajorUpgrade DowngradeErrorMessage="The version currently installed is newer than the version you are attempting to install."/>
+
+		<Feature Id="VssPowerTools" Title="VSS Power Tools" Level="1">
+			<ComponentGroupRef Id="VssPowerTools" />
+		</Feature>
+	</Product>
+
+	<Fragment>
+		<Directory Id="TARGETDIR" Name="SourceDir">
+			<Directory Id="ProgramFilesFolder">
+				<Directory Id="INSTALLFOLDER" Name="VssPowerTools">
+				</Directory>
+			</Directory>
+		</Directory>
+	</Fragment>
+
+	<Fragment>
+		<ComponentGroup Id="VssPowerTools" Directory="INSTALLFOLDER">
+			<ComponentRef Id="true" />
+			<ComponentRef Id="VssPowerTools" />
+			<ComponentRef Id="SharpSvn1.8_x86_powtools" />
+			<ComponentRef Id="Registry_VssPowAppPath" />
+		</ComponentGroup>
+	</Fragment>
+
+	<Fragment>
+
+		<Component Id="SharpSvn1.8_x86_powtools" Directory="INSTALLFOLDER" Win64="no">
+			<File Id="SharpSvn1.8_x86_powtools" Name="SharpSvn.dll" Source="$(var.SolutionDir)packages\SharpSvn.1.8-x86.1.8010.3345.53\lib\net20\SharpSvn.dll" />
+		</Component>
+
+		<Component Id="true" Directory="INSTALLFOLDER" Win64="no">
+			<File Name="true.exe" Id="true.exe" Source="$(var.pwtoolsbin)true.exe" />
+		</Component>
+
+		<Component Id="VssPowerTools" Directory="INSTALLFOLDER" Win64="no">
+			<File Id="VssPowerTools.exe" Name="VssPowerTools.exe" Source="$(var.pwtoolsbin)VssPowerTools.exe" />
+			<File Id="VssPowerTools.exe.config" Name="VssPowerTools.exe.config" Source="$(var.pwtoolsbin)VssPowerTools.exe.config" />
+		</Component>
+
+		<Component Id="Registry_VssPowAppPath" Guid="73FFD729-49C7-476A-8F13-0AD33B916408" Directory="TARGETDIR">
+			<RegistryKey Root="HKLM" Key="SOFTWARE\Microsoft\Windows\CurrentVersion\App Paths\VssPowerTools.exe">
+				<RegistryValue Type="string" Value="[INSTALLFOLDER]VssPowerTools.exe"/>
+				<RegistryValue Type="string" Name="Path" Value="[INSTALLFOLDER]"/>
+			</RegistryKey>
+		</Component>
+	</Fragment>
+
+</Wix>
