@@ -19,3 +19,5 @@ Require installed TortoiseSvn for display patch
 Require installed TortoiseSvn for display patch
 
 * Copy selected checkins to Clibboard in CSV format(tab separated)
+
+![ScreenShot](https://cloud.githubusercontent.com/assets/703544/5602518/cf7dfa44-9363-11e4-8b3a-f2ad5e2904f4.png)
