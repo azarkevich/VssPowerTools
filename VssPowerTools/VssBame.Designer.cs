@@ -29,6 +29,7 @@
 		private void InitializeComponent()
 		{
 			this.components = new System.ComponentModel.Container();
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(VssBame));
 			this.textBoxFileSpec = new System.Windows.Forms.TextBox();
 			this.label1 = new System.Windows.Forms.Label();
 			this.buttonBuild = new System.Windows.Forms.Button();
@@ -147,6 +148,7 @@
 			this.Controls.Add(this.label1);
 			this.Controls.Add(this.textBoxSSDir);
 			this.Controls.Add(this.textBoxFileSpec);
+			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.Name = "VssBame";
 			this.Text = "VssBame";
 			this.DragDrop += new System.Windows.Forms.DragEventHandler(this.VssBameDragDrop);

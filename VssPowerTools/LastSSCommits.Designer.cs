@@ -29,6 +29,7 @@
 		private void InitializeComponent()
 		{
 			this.components = new System.ComponentModel.Container();
+			System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(LastSSCommits));
 			this.listViewCommits = new System.Windows.Forms.ListView();
 			this.colDate = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
 			this.colAuthor = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
@@ -37,7 +38,6 @@
 			this.colComment = ((System.Windows.Forms.ColumnHeader)(new System.Windows.Forms.ColumnHeader()));
 			this.contextMenuStrip = new System.Windows.Forms.ContextMenuStrip(this.components);
 			this.copyPathsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-			this.generateFDPToFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
 			this.blameToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.unifiedDiffToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -47,6 +47,7 @@
 			this.queuePatchToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.queuePatchToLatestToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
+			this.generateFDPToFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.cSVToClipboardToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.comboBoxTimeFilter = new System.Windows.Forms.ComboBox();
 			this.label1 = new System.Windows.Forms.Label();
@@ -127,7 +128,7 @@
             this.generateFDPToFileToolStripMenuItem,
             this.cSVToClipboardToolStripMenuItem});
 			this.contextMenuStrip.Name = "contextMenuStrip";
-			this.contextMenuStrip.Size = new System.Drawing.Size(219, 242);
+			this.contextMenuStrip.Size = new System.Drawing.Size(219, 220);
 			// 
 			// copyPathsToolStripMenuItem
 			// 
@@ -136,13 +137,6 @@
 			this.copyPathsToolStripMenuItem.Size = new System.Drawing.Size(218, 22);
 			this.copyPathsToolStripMenuItem.Text = "Copy paths";
 			this.copyPathsToolStripMenuItem.Click += new System.EventHandler(this.copyPathsToolStripMenuItem_Click);
-			// 
-			// generateFDPToFileToolStripMenuItem
-			// 
-			this.generateFDPToFileToolStripMenuItem.Name = "generateFDPToFileToolStripMenuItem";
-			this.generateFDPToFileToolStripMenuItem.Size = new System.Drawing.Size(218, 22);
-			this.generateFDPToFileToolStripMenuItem.Text = "Generate FDP to file";
-			this.generateFDPToFileToolStripMenuItem.Click += new System.EventHandler(this.generateFDPToFileToolStripMenuItem_Click);
 			// 
 			// toolStripSeparator1
 			// 
@@ -199,6 +193,13 @@
 			// 
 			this.toolStripSeparator3.Name = "toolStripSeparator3";
 			this.toolStripSeparator3.Size = new System.Drawing.Size(215, 6);
+			// 
+			// generateFDPToFileToolStripMenuItem
+			// 
+			this.generateFDPToFileToolStripMenuItem.Name = "generateFDPToFileToolStripMenuItem";
+			this.generateFDPToFileToolStripMenuItem.Size = new System.Drawing.Size(218, 22);
+			this.generateFDPToFileToolStripMenuItem.Text = "Generate FDP to file";
+			this.generateFDPToFileToolStripMenuItem.Click += new System.EventHandler(this.generateFDPToFileToolStripMenuItem_Click);
 			// 
 			// cSVToClipboardToolStripMenuItem
 			// 
@@ -349,6 +350,7 @@
 			this.Controls.Add(this.label1);
 			this.Controls.Add(this.comboBoxTimeFilter);
 			this.Controls.Add(this.listViewCommits);
+			this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
 			this.KeyPreview = true;
 			this.Name = "LastSSCommits";
 			this.Text = "Last SourceSafe Commits";
