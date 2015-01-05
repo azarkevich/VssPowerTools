@@ -32,7 +32,7 @@ namespace VssPowerTools
 					var c = v.IndexOf("/command:");
 					if(c != -1)
 						v = v.Substring(0, c - 1).Trim(' ', '"');
-					
+
 					_tproc = v;
 				}
 			}
@@ -46,9 +46,9 @@ namespace VssPowerTools
 				buttonBuild.Enabled = false;
 				textBoxSSDir.Enabled = false;
 				textBoxFileSpec.Enabled = false;
-				comboBox_MimeType.Enabled = false;
+				checkBoxConvertUCS2.Enabled = false;
 
-				var task = new BlameMaker().Blame(textBoxFileSpec.Text, comboBox_MimeType.Text, textBoxSSDir.Text, "autobuild", "build", pos => 
+				var task = new BlameMaker().Blame(textBoxFileSpec.Text, checkBoxConvertUCS2.Checked, textBoxSSDir.Text, "autobuild", "build", pos =>
 					progressBar.Invoke((Action)delegate {
 						progressBar.Value = (int)(pos * progressBar.Maximum);
 						progressBar.Text = progressBar.Value.ToString("0:0.00");
@@ -71,7 +71,7 @@ namespace VssPowerTools
 					buttonBuild.Enabled = true;
 					textBoxSSDir.Enabled = true;
 					textBoxFileSpec.Enabled = true;
-					comboBox_MimeType.Enabled = true;
+					checkBoxConvertUCS2.Enabled = true;
 
 				}, TaskScheduler.FromCurrentSynchronizationContext());
 			}
@@ -81,7 +81,7 @@ namespace VssPowerTools
 				buttonBuild.Enabled = true;
 				textBoxSSDir.Enabled = true;
 				textBoxFileSpec.Enabled = true;
-				comboBox_MimeType.Enabled = true;
+				checkBoxConvertUCS2.Enabled = true;
 			}
 		}
 
@@ -101,7 +101,7 @@ namespace VssPowerTools
 				MessageBox.Show(ex.ToString(), ex.Message);
 			}
 		}
-		
+
 		void ButtonLogClick(object sender, EventArgs e)
 		{
 			try{
@@ -153,7 +153,7 @@ namespace VssPowerTools
 
 				if(textBoxFileSpec.Text.StartsWith("/"))
 					textBoxFileSpec.Text = textBoxFileSpec.Text.Substring(1);
-				
+
 				textBoxFileSpec.Text = "$/" + textBoxFileSpec.Text;
 			}
 			catch(Exception)
@@ -190,7 +190,7 @@ namespace VssPowerTools
 			SettingsChanged();
 		}
 
-		void comboBox_MimeType_TextChanged(object sender, EventArgs e)
+		void checkBoxConvertUCS2_CheckedChanged(object sender, EventArgs e)
 		{
 			SettingsChanged();
 		}

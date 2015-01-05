@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 using SharpSvn;
 using System.IO;
@@ -11,12 +12,12 @@ namespace VssPowerTools
 {
 	class BlameMaker
 	{
-		public Task<string> Blame(string fileSpec, string mimeType, string ssIni, string ssUser, string ssPasswd, Action<double> progress)
+		public Task<string> Blame(string fileSpec, bool convertFromUcs2, string ssIni, string ssUser, string ssPasswd, Action<double> progress)
 		{
-			return Task.Factory.StartNew(() => BlameCore(fileSpec, mimeType, ssIni, ssUser, ssPasswd, progress));
+			return Task.Factory.StartNew(() => BlameCore(fileSpec, convertFromUcs2, ssIni, ssUser, ssPasswd, progress));
 		}
 
-		string BlameCore(string fileSpec, string mimeType, string ssIni, string ssUser, string ssPasswd, Action<double> progress)
+		string BlameCore(string fileSpec, bool convertFromUcs2, string ssIni, string ssUser, string ssPasswd, Action<double> progress)
 		{
 			var db = new VSSDatabase();
 			db.Open(ssIni, ssUser, ssPasswd);
@@ -82,13 +83,16 @@ namespace VssPowerTools
 
 					File.SetAttributes(fpath, FileAttributes.Normal);
 
+					// convert from UCS2 to UTF-8
+					if(convertFromUcs2)
+					{
+						var txt = File.ReadAllText(fpath, Encoding.Unicode);
+						File.WriteAllText(fpath, txt);
+					}
+
 					if(firstTime)
 					{
 						svn.Add(fpath);
-
-						mimeType = (mimeType ?? "").Trim();
-						if(!string.IsNullOrEmpty(mimeType))
-							svn.SetProperty(fpath, "svn:mime-type", mimeType);
 					}
 
 					firstTime = false;
