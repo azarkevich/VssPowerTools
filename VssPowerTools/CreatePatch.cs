@@ -10,36 +10,9 @@ namespace VssPowerTools
 	{
 		public void Create(string vssDB, string vssPath, int version1, int version2, string writeTo, bool append)
 		{
-			vssDB = vssDB.TrimEnd('\\', '/') + @"\";
-
-			var path = vssPath.TrimStart('$', '/', '\\');
-			var fileName = Path.GetFileName(path);
-
-			var db = new VSSDatabase();
-			db.Open(vssDB, "autobuild", "build");
-
-			var item = db.VSSItem[vssPath];
-
-			var fileNameA = fileName + ".v" + version1;
-			var fileNameB = fileName + ".v" + version2;
-
-			if(File.Exists(fileNameA))
-			{
-				File.SetAttributes(fileNameA, FileAttributes.Normal);
-				File.Delete(fileNameA);
-			}
-
-			if(File.Exists(fileNameB))
-			{
-				File.SetAttributes(fileNameB, FileAttributes.Normal);
-				File.Delete(fileNameB);
-			}
-
-			item.Version[version1].VSSVersion.VSSItem.Get(fileNameA);
-			if(version2 != -1)
-				item.Version[version2].VSSVersion.VSSItem.Get(fileNameB);
-			else
-				item.Get(fileNameB);
+			string fileNameA;
+			string fileNameB;
+			var path = GetVersions(vssDB, vssPath, version1, version2, out fileNameA, out fileNameB);
 
 			SvnFileDiff diff;
 
@@ -78,6 +51,42 @@ namespace VssPowerTools
 					}
 				}
 			}
+		}
+
+		public static string GetVersions(string vssDB, string vssPath, int version1, int version2, out string fileNameA, out string fileNameB)
+		{
+			vssDB = vssDB.TrimEnd('\\', '/') + @"\";
+
+			var path = vssPath.TrimStart('$', '/', '\\');
+			var fileName = Path.GetFileName(path);
+
+			var db = new VSSDatabase();
+			db.Open(vssDB, "autobuild", "build");
+
+			var item = db.VSSItem[vssPath];
+
+			fileNameA = fileName + ".v" + version1;
+			fileNameB = fileName + ".v" + version2;
+
+			if (File.Exists(fileNameA))
+			{
+				File.SetAttributes(fileNameA, FileAttributes.Normal);
+				File.Delete(fileNameA);
+			}
+
+			if (File.Exists(fileNameB))
+			{
+				File.SetAttributes(fileNameB, FileAttributes.Normal);
+				File.Delete(fileNameB);
+			}
+
+			item.Version[version1].VSSVersion.VSSItem.Get(fileNameA);
+			if (version2 != -1)
+				item.Version[version2].VSSVersion.VSSItem.Get(fileNameB);
+			else
+				item.Get(fileNameB);
+
+			return path;
 		}
 
 		public void CreateMulti(string target, IEnumerable<string> sourceFiles)

@@ -63,6 +63,7 @@
 			this.textBoxSS = new System.Windows.Forms.TextBox();
 			this.label5 = new System.Windows.Forms.Label();
 			this.textBoxComment = new System.Windows.Forms.TextBox();
+			this.diffToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.contextMenuStrip.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -118,6 +119,7 @@
             this.copyPathsToolStripMenuItem,
             this.toolStripSeparator1,
             this.blameToolStripMenuItem,
+            this.diffToolStripMenuItem,
             this.unifiedDiffToolStripMenuItem,
             this.savePatchToolStripMenuItem,
             this.createPatchesupToHeadToolStripMenuItem,
@@ -128,7 +130,7 @@
             this.generateFDPToFileToolStripMenuItem,
             this.cSVToClipboardToolStripMenuItem});
 			this.contextMenuStrip.Name = "contextMenuStrip";
-			this.contextMenuStrip.Size = new System.Drawing.Size(219, 220);
+			this.contextMenuStrip.Size = new System.Drawing.Size(219, 264);
 			// 
 			// copyPathsToolStripMenuItem
 			// 
@@ -331,6 +333,13 @@
 			this.textBoxComment.Size = new System.Drawing.Size(96, 20);
 			this.textBoxComment.TabIndex = 7;
 			// 
+			// diffToolStripMenuItem
+			// 
+			this.diffToolStripMenuItem.Name = "diffToolStripMenuItem";
+			this.diffToolStripMenuItem.Size = new System.Drawing.Size(218, 22);
+			this.diffToolStripMenuItem.Text = "Diff ...";
+			this.diffToolStripMenuItem.Click += new System.EventHandler(this.diffToolStripMenuItem_Click);
+			// 
 			// LastSSCommits
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -397,5 +406,6 @@
 		private System.Windows.Forms.ToolStripMenuItem cSVToClipboardToolStripMenuItem;
 		private System.Windows.Forms.Label label5;
 		private System.Windows.Forms.TextBox textBoxComment;
+		private System.Windows.Forms.ToolStripMenuItem diffToolStripMenuItem;
 	}
 }

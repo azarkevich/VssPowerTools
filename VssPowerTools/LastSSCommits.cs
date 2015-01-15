@@ -8,6 +8,7 @@ using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using Microsoft.Win32;
 using VssPowerTools.Properties;
 
 namespace VssPowerTools
@@ -626,7 +627,7 @@ namespace VssPowerTools
 			new VssBame(textBoxSS.Text.TrimEnd('\\', '/'), commit.File).ShowDialog();
 		}
 
-		void ShowUnifiedDiffToolStripMenuItemClick(object sender, EventArgs e)
+		CommitAtom GetSingleSelectedCommitAtom()
 		{
 			var selected = listViewCommits
 				.SelectedItems
@@ -636,19 +637,74 @@ namespace VssPowerTools
 				.ToArray()
 			;
 
-			if(selected.Length != 1)
+			if (selected.Length != 1)
 			{
 				MessageBox.Show("Select exactly one item", "Error");
-				return;
+				return null;
 			}
 
 			var commit = selected[0];
 
-			if(commit.Action != CommitAction.Commit)
+			if (commit.Action != CommitAction.Commit)
 			{
 				MessageBox.Show("Can show diff only for commit action", "Error");
+				return null;
+			}
+
+			return commit;
+		}
+
+		void diffToolStripMenuItem_Click(object sender, EventArgs e)
+		{
+			// try find external tools
+			string bcmp;
+			using (var rk = Registry.CurrentUser.OpenSubKey(@"Software\Scooter Software\Beyond Compare 3", false))
+			{
+				bcmp = (string)rk.GetValue("ExePath");
+			}
+
+			if(bcmp == null || !File.Exists(bcmp))
+			{
+				MessageBox.Show("Can't find Beyond Compare 3 tool", "Error");
 				return;
 			}
+
+			var commit = GetSingleSelectedCommitAtom();
+			if (commit == null)
+				return;
+
+			string fileNameA = null;
+			string fileNameB = null;
+			try
+			{
+				CreatePatch.GetVersions(textBoxSS.Text, commit.File, commit.Version - 1, commit.Version, out fileNameA, out fileNameB);
+
+				Process
+					.Start(bcmp, "\"" + fileNameA + "\" \"" + fileNameB + "\"")
+					.WaitForExit()
+				;
+			}
+			finally
+			{
+				if (fileNameA != null)
+				{
+					File.SetAttributes(fileNameA, FileAttributes.Normal);
+					File.Delete(fileNameA);
+				}
+
+				if (fileNameB != null)
+				{
+					File.SetAttributes(fileNameB, FileAttributes.Normal);
+					File.Delete(fileNameB);
+				}
+			}
+		}
+
+		void ShowUnifiedDiffToolStripMenuItemClick(object sender, EventArgs e)
+		{
+			var commit = GetSingleSelectedCommitAtom();
+			if (commit == null)
+				return;
 
 			var outFile = Path.Combine(
 				Path.GetTempPath(),
