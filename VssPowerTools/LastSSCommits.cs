@@ -344,215 +344,257 @@ namespace VssPowerTools
 			ReloadCommits();
 		}
 
-		void ReloadCommits()
+		void buttonSelectJournal_Click(object sender, EventArgs e)
+		{
+			var journalFilePath = GetActiveJournalFilePath(textBoxSS.Text);
+			if (journalFilePath != null)
+			{
+				openJournalDialog.InitialDirectory = Path.GetDirectoryName(journalFilePath);
+			}
+
+			if (openJournalDialog.ShowDialog() == DialogResult.OK)
+			{
+				ReloadCommits(new List<string> { openJournalDialog.FileName });
+
+				buttonLoad.Text = (string)buttonLoad.Tag;
+			}
+		}
+
+		void ReloadCommits(List<string> journals = null)
 		{
 			listViewCommits.Items.Clear();
 			_commits.Clear();
 
-			var journal = GetJournalFile(textBoxSS.Text);
-			if (journal == null)
-				return;
-
-			CommitAtom atom = null;
-			var nextAction = false;
-			foreach (var line in File.ReadAllLines(journal).Where(l => !string.IsNullOrWhiteSpace(l)))
+			if(journals == null)
 			{
-				if (nextAction)
-				{
-					// parse action
-					if (line == "Checked in")
-					{
-						atom.Action = CommitAction.Commit;
-					}
-					else if (line.StartsWith("Labeled"))
-					{
-						atom.Action = CommitAction.Label;
-					}
-					else if (line.StartsWith("Rolled back"))
-					{
-						atom.Action = CommitAction.Rollback;
-					}
-					else if (line.EndsWith(" added"))
-					{
-						var fn = line.Substring(0, line.Length - " added".Length);
-						atom.File += "/" + fn;
-						atom.Action = CommitAction.Add;
-					}
-					else if (line.EndsWith(" created"))
-					{
-						var fn = line.Substring(0, line.Length - " created".Length);
-						atom.File += "/" + fn;
-						atom.Action = CommitAction.Add;
-					}
-					else if (line.EndsWith(" deleted"))
-					{
-						var fn = line.Substring(0, line.Length - " deleted".Length);
-						atom.File += "/" + fn;
-						atom.Action = CommitAction.Delete;
-					}
-					else if (line.EndsWith(" archived"))
-					{
-						atom.File += line;
-						atom.Action = CommitAction.Archived;
-					}
-					else if (line.EndsWith(" purged"))
-					{
-						var fn = line.Substring(0, line.Length - " purged".Length);
-						atom.File += "/" + fn;
-						atom.Action = CommitAction.Purge;
-					}
-					else if (line.EndsWith(" destroyed"))
-					{
-						var fn = line.Substring(0, line.Length - " destroyed".Length);
-						atom.File += "/" + fn;
-						atom.Action = CommitAction.Destroy;
-					}
-					else if (line.EndsWith(" recovered"))
-					{
-						var fn = line.Substring(0, line.Length - " recovered".Length);
-						atom.File += "/" + fn;
-						atom.Action = CommitAction.Recover;
-					}
-					else if (line.EndsWith(" branched"))
-					{
-						var fn = line.Substring(0, line.Length - " branched".Length);
-						atom.File += "/" + fn;
-						atom.Action = CommitAction.Branch;
-					}
-					else if (line.Contains(" shared from "))
-					{
-						var pos = line.IndexOf(" shared from ", StringComparison.Ordinal);
-						var fn = line.Substring(0, pos);
-						atom.File += "/" + fn;
-						atom.Action = CommitAction.Share;
-						atom.From = line.Substring(pos + " shared from ".Length);
-					}
-					else if (line.Contains(" copied from "))
-					{
-						var pos = line.IndexOf(" copied from ", StringComparison.Ordinal);
-						var fn = line.Substring(0, pos);
-						atom.File += "/" + fn;
-						atom.Action = CommitAction.Copy;
-						atom.From = line.Substring(pos + " copied from ".Length);
-					}
-					else if (line.Contains(" moved to "))
-					{
-						var pos = line.IndexOf(" moved to ", StringComparison.Ordinal);
-						var fn = line.Substring(0, pos);
-						atom.File += "/" + fn;
-						atom.Action = CommitAction.Move;
-						atom.To = line.Substring(pos + " moved to ".Length);
-					}
-					else if (line.Contains(" renamed to "))
-					{
-						var pos = line.IndexOf(" renamed to ", StringComparison.Ordinal);
-						var fn = line.Substring(0, pos);
-						atom.To = atom.File + "/" + line.Substring(pos + " renamed to ".Length);
-						atom.File += "/" + fn;
-						atom.Action = CommitAction.Move;
-					}
-
-					nextAction = false;
-					continue;
-				}
-
-				if (line.StartsWith("$"))
-				{
-					// add previous atom
-					AddAtom(_commits, atom);
-
-					atom = new CommitAtom {
-						Info = new CommitInfo(),
-						File = line
-					};
-					continue;
-				}
-
-				if (line.StartsWith("Version: "))
-				{
-					Int32.TryParse(line.Substring("Version: ".Length), out atom.Version);
-					continue;
-				}
-
-				if (line.StartsWith("User: "))
-				{
-					nextAction = true;
-					var m = _commitInfoRx.Match(line);
-					if (m.Success)
-					{
-						atom.Info.Author = m.Groups["user"].Value;
-
-						var date = m.Groups["date"].Value;
-						var time = m.Groups["time"].Value;
-
-						atom.Info.CommitTime = date + " " + time;
-
-						var year = 0;
-						var month = 0;
-						var day = 0;
-						var hour = 0;
-						var min = 0;
-
-						var mt = _time.Match(time);
-						if (mt.Success)
-						{
-							hour = Int32.Parse(mt.Groups["hour"].Value);
-							min = Int32.Parse(mt.Groups["min"].Value);
-						}
-
-						if (time.EndsWith("p") && hour < 12)
-						{
-							hour += 12;
-						}
-
-						var dm = _date.Match(date);
-						if (dm.Success)
-						{
-							year = 2000 + Int32.Parse(dm.Groups["year"].Value);
-
-							var p1 = Int32.Parse(dm.Groups["p1"].Value);
-							var p2 = Int32.Parse(dm.Groups["p2"].Value);
-
-							if (time.EndsWith("p") || time.EndsWith("a"))
-							{
-								month = p1;
-								day = p2;
-							}
-							else
-							{
-								month = p2;
-								day = p1;
-							}
-
-							if (month > 12)
-							{
-								int t = day;
-								day = month;
-								month = t;
-							}
-						}
-
-						atom.Info.ParsedCommitTime = new DateTime(year, month, day, hour, min, 0);
-					}
-					continue;
-				}
-
-				if (line.StartsWith("Comment: "))
-				{
-					atom.Comment = line.Substring("Comment: ".Length);
-					continue;
-				}
-				atom.Comment += line;
+				journals = GetJournalFiles(textBoxSS.Text);
+				if (journals == null)
+					return;
 			}
-			// add last parsed atom
-			AddAtom(_commits, atom);
+
+			foreach (var journal in journals)
+			{
+				CommitAtom atom = null;
+				var nextAction = false;
+				foreach (var line in File.ReadAllLines(journal).Where(l => !string.IsNullOrWhiteSpace(l)))
+				{
+					if (nextAction)
+					{
+						// parse action
+						if (line == "Checked in")
+						{
+							atom.Action = CommitAction.Commit;
+						}
+						else if (line.StartsWith("Labeled"))
+						{
+							atom.Action = CommitAction.Label;
+						}
+						else if (line.StartsWith("Rolled back"))
+						{
+							atom.Action = CommitAction.Rollback;
+						}
+						else if (line.EndsWith(" added"))
+						{
+							var fn = line.Substring(0, line.Length - " added".Length);
+							atom.File += "/" + fn;
+							atom.Action = CommitAction.Add;
+						}
+						else if (line.EndsWith(" created"))
+						{
+							var fn = line.Substring(0, line.Length - " created".Length);
+							atom.File += "/" + fn;
+							atom.Action = CommitAction.Add;
+						}
+						else if (line.EndsWith(" deleted"))
+						{
+							var fn = line.Substring(0, line.Length - " deleted".Length);
+							atom.File += "/" + fn;
+							atom.Action = CommitAction.Delete;
+						}
+						else if (line.EndsWith(" archived"))
+						{
+							atom.File += line;
+							atom.Action = CommitAction.Archived;
+						}
+						else if (line.EndsWith(" purged"))
+						{
+							var fn = line.Substring(0, line.Length - " purged".Length);
+							atom.File += "/" + fn;
+							atom.Action = CommitAction.Purge;
+						}
+						else if (line.EndsWith(" destroyed"))
+						{
+							var fn = line.Substring(0, line.Length - " destroyed".Length);
+							atom.File += "/" + fn;
+							atom.Action = CommitAction.Destroy;
+						}
+						else if (line.EndsWith(" recovered"))
+						{
+							var fn = line.Substring(0, line.Length - " recovered".Length);
+							atom.File += "/" + fn;
+							atom.Action = CommitAction.Recover;
+						}
+						else if (line.EndsWith(" branched"))
+						{
+							var fn = line.Substring(0, line.Length - " branched".Length);
+							atom.File += "/" + fn;
+							atom.Action = CommitAction.Branch;
+						}
+						else if (line.Contains(" shared from "))
+						{
+							var pos = line.IndexOf(" shared from ", StringComparison.Ordinal);
+							var fn = line.Substring(0, pos);
+							atom.File += "/" + fn;
+							atom.Action = CommitAction.Share;
+							atom.From = line.Substring(pos + " shared from ".Length);
+						}
+						else if (line.Contains(" copied from "))
+						{
+							var pos = line.IndexOf(" copied from ", StringComparison.Ordinal);
+							var fn = line.Substring(0, pos);
+							atom.File += "/" + fn;
+							atom.Action = CommitAction.Copy;
+							atom.From = line.Substring(pos + " copied from ".Length);
+						}
+						else if (line.Contains(" moved to "))
+						{
+							var pos = line.IndexOf(" moved to ", StringComparison.Ordinal);
+							var fn = line.Substring(0, pos);
+							atom.File += "/" + fn;
+							atom.Action = CommitAction.Move;
+							atom.To = line.Substring(pos + " moved to ".Length);
+						}
+						else if (line.Contains(" renamed to "))
+						{
+							var pos = line.IndexOf(" renamed to ", StringComparison.Ordinal);
+							var fn = line.Substring(0, pos);
+							atom.To = atom.File + "/" + line.Substring(pos + " renamed to ".Length);
+							atom.File += "/" + fn;
+							atom.Action = CommitAction.Move;
+						}
+
+						nextAction = false;
+						continue;
+					}
+
+					if (line.StartsWith("$"))
+					{
+						// add previous atom
+						AddAtom(_commits, atom);
+
+						atom = new CommitAtom {
+							Info = new CommitInfo(),
+							File = line
+						};
+						continue;
+					}
+
+					if (line.StartsWith("Version: "))
+					{
+						Int32.TryParse(line.Substring("Version: ".Length), out atom.Version);
+						continue;
+					}
+
+					if (line.StartsWith("User: "))
+					{
+						nextAction = true;
+						var m = _commitInfoRx.Match(line);
+						if (m.Success)
+						{
+							atom.Info.Author = m.Groups["user"].Value;
+
+							var date = m.Groups["date"].Value;
+							var time = m.Groups["time"].Value;
+
+							atom.Info.CommitTime = date + " " + time;
+
+							var year = 0;
+							var month = 0;
+							var day = 0;
+							var hour = 0;
+							var min = 0;
+
+							var mt = _time.Match(time);
+							if (mt.Success)
+							{
+								hour = Int32.Parse(mt.Groups["hour"].Value);
+								min = Int32.Parse(mt.Groups["min"].Value);
+							}
+
+							if (time.EndsWith("p") && hour < 12)
+							{
+								hour += 12;
+							}
+
+							var dm = _date.Match(date);
+							if (dm.Success)
+							{
+								year = 2000 + Int32.Parse(dm.Groups["year"].Value);
+
+								var p1 = Int32.Parse(dm.Groups["p1"].Value);
+								var p2 = Int32.Parse(dm.Groups["p2"].Value);
+
+								if (time.EndsWith("p") || time.EndsWith("a"))
+								{
+									month = p1;
+									day = p2;
+								}
+								else
+								{
+									month = p2;
+									day = p1;
+								}
+
+								if (month > 12)
+								{
+									int t = day;
+									day = month;
+									month = t;
+								}
+							}
+
+							atom.Info.ParsedCommitTime = new DateTime(year, month, day, hour, min, 0);
+						}
+						continue;
+					}
+
+					if (line.StartsWith("Comment: "))
+					{
+						atom.Comment = line.Substring("Comment: ".Length);
+						continue;
+					}
+					atom.Comment += line;
+				}
+				// add last parsed atom
+				AddAtom(_commits, atom);
+			}
+
+			buttonLoad.Text = string.Format("{0} ({1})", buttonLoad.Tag, journals.Count);
 
 			FillCommits();
 
 			Settings.Default.Save();
 		}
 
-		string GetJournalFile(string vss)
+		static List<string> GetJournalFiles(string vss)
+		{
+			var journalFilePath = GetActiveJournalFilePath(vss);
+			if (journalFilePath == null)
+				return null;
+
+			if (!File.Exists(journalFilePath))
+			{
+				MessageBox.Show("Journal file not found: " + journalFilePath);
+				return null;
+			}
+
+			return Directory.GetFiles(Path.GetDirectoryName(journalFilePath))
+				.OrderBy(File.GetLastWriteTimeUtc)
+				.ToList()
+			;
+		}
+
+		static string GetActiveJournalFilePath(string vss)
 		{
 			var theirsSsIni = vss;
 			if (Directory.Exists(theirsSsIni))
@@ -577,21 +619,13 @@ namespace VssPowerTools
 				.Select(l => l.Trim().ToLowerInvariant())
 				.Where(l => l.StartsWith("journal_file"))
 				.Select(l => l.Substring(l.IndexOf('=') + 1).Trim())
-				.FirstOrDefault()
-			;
+				.FirstOrDefault();
 
 			if (journalFilePath == null)
 			{
 				MessageBox.Show("Should not detect journal file path");
 				return null;
 			}
-
-			if (!File.Exists(journalFilePath))
-			{
-				MessageBox.Show("Journal file not found: " + journalFilePath);
-				return null;
-			}
-
 			return journalFilePath;
 		}
 

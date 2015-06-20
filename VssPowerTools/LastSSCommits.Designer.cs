@@ -40,6 +40,7 @@
 			this.copyPathsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
 			this.blameToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.diffToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.unifiedDiffToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.savePatchToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
 			this.createPatchesupToHeadToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -63,7 +64,8 @@
 			this.textBoxSS = new System.Windows.Forms.TextBox();
 			this.label5 = new System.Windows.Forms.Label();
 			this.textBoxComment = new System.Windows.Forms.TextBox();
-			this.diffToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+			this.buttonSelectJournal = new System.Windows.Forms.Button();
+			this.openJournalDialog = new System.Windows.Forms.OpenFileDialog();
 			this.contextMenuStrip.SuspendLayout();
 			this.SuspendLayout();
 			// 
@@ -130,7 +132,7 @@
             this.generateFDPToFileToolStripMenuItem,
             this.cSVToClipboardToolStripMenuItem});
 			this.contextMenuStrip.Name = "contextMenuStrip";
-			this.contextMenuStrip.Size = new System.Drawing.Size(219, 264);
+			this.contextMenuStrip.Size = new System.Drawing.Size(219, 242);
 			// 
 			// copyPathsToolStripMenuItem
 			// 
@@ -151,6 +153,13 @@
 			this.blameToolStripMenuItem.Size = new System.Drawing.Size(218, 22);
 			this.blameToolStripMenuItem.Text = "Blame/Log ...";
 			this.blameToolStripMenuItem.Click += new System.EventHandler(this.blameToolStripMenuItem_Click);
+			// 
+			// diffToolStripMenuItem
+			// 
+			this.diffToolStripMenuItem.Name = "diffToolStripMenuItem";
+			this.diffToolStripMenuItem.Size = new System.Drawing.Size(218, 22);
+			this.diffToolStripMenuItem.Text = "Diff ...";
+			this.diffToolStripMenuItem.Click += new System.EventHandler(this.diffToolStripMenuItem_Click);
 			// 
 			// unifiedDiffToolStripMenuItem
 			// 
@@ -298,11 +307,12 @@
 			// buttonLoad
 			// 
 			this.buttonLoad.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-			this.buttonLoad.Location = new System.Drawing.Point(1061, 10);
+			this.buttonLoad.Location = new System.Drawing.Point(981, 9);
 			this.buttonLoad.Name = "buttonLoad";
-			this.buttonLoad.Size = new System.Drawing.Size(49, 23);
+			this.buttonLoad.Size = new System.Drawing.Size(93, 23);
 			this.buttonLoad.TabIndex = 2;
-			this.buttonLoad.Text = "Load";
+			this.buttonLoad.Tag = "Auto Load";
+			this.buttonLoad.Text = "Auto Load";
 			this.buttonLoad.UseVisualStyleBackColor = true;
 			this.buttonLoad.Click += new System.EventHandler(this.buttonLoad_Click);
 			// 
@@ -313,7 +323,7 @@
 			this.textBoxSS.DataBindings.Add(new System.Windows.Forms.Binding("Text", global::VssPowerTools.Properties.Settings.Default, "SourceSafe", true, System.Windows.Forms.DataSourceUpdateMode.OnPropertyChanged));
 			this.textBoxSS.Location = new System.Drawing.Point(126, 12);
 			this.textBoxSS.Name = "textBoxSS";
-			this.textBoxSS.Size = new System.Drawing.Size(929, 20);
+			this.textBoxSS.Size = new System.Drawing.Size(849, 20);
 			this.textBoxSS.TabIndex = 1;
 			this.textBoxSS.Text = global::VssPowerTools.Properties.Settings.Default.SourceSafe;
 			// 
@@ -333,18 +343,23 @@
 			this.textBoxComment.Size = new System.Drawing.Size(96, 20);
 			this.textBoxComment.TabIndex = 7;
 			// 
-			// diffToolStripMenuItem
+			// buttonSelectJournal
 			// 
-			this.diffToolStripMenuItem.Name = "diffToolStripMenuItem";
-			this.diffToolStripMenuItem.Size = new System.Drawing.Size(218, 22);
-			this.diffToolStripMenuItem.Text = "Diff ...";
-			this.diffToolStripMenuItem.Click += new System.EventHandler(this.diffToolStripMenuItem_Click);
+			this.buttonSelectJournal.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+			this.buttonSelectJournal.Location = new System.Drawing.Point(1080, 9);
+			this.buttonSelectJournal.Name = "buttonSelectJournal";
+			this.buttonSelectJournal.Size = new System.Drawing.Size(30, 23);
+			this.buttonSelectJournal.TabIndex = 12;
+			this.buttonSelectJournal.Text = "...";
+			this.buttonSelectJournal.UseVisualStyleBackColor = true;
+			this.buttonSelectJournal.Click += new System.EventHandler(this.buttonSelectJournal_Click);
 			// 
 			// LastSSCommits
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(1122, 526);
+			this.Controls.Add(this.buttonSelectJournal);
 			this.Controls.Add(this.textBoxSS);
 			this.Controls.Add(this.buttonLoad);
 			this.Controls.Add(this.buttonApply);
@@ -407,5 +422,7 @@
 		private System.Windows.Forms.Label label5;
 		private System.Windows.Forms.TextBox textBoxComment;
 		private System.Windows.Forms.ToolStripMenuItem diffToolStripMenuItem;
+		private System.Windows.Forms.Button buttonSelectJournal;
+		private System.Windows.Forms.OpenFileDialog openJournalDialog;
 	}
 }
